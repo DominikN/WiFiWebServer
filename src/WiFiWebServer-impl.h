@@ -29,6 +29,8 @@
 #include <Arduino.h>
 #include <libb64/cencode.h>
 
+#include <Husarnet.h>
+
 #include "WiFiWebServer.h"
 #include "utility/RequestHandlersImpl.h"
 #include "utility/WiFiDebug.h"
@@ -158,7 +160,7 @@ void WiFiWebServer::handleClient()
 {
   if (_currentStatus == HC_NONE) 
   {
-    WiFiClient client = _server.available();
+    HusarnetClient client = _server.available();
     if (!client) 
     {
       return;
@@ -220,7 +222,7 @@ void WiFiWebServer::handleClient()
 
   if (!keepCurrentClient) 
   {
-    _currentClient = WiFiClient();
+    _currentClient = HusarnetClient();
     _currentStatus = HC_NONE;
     //KH
     //_currentUpload.reset();
@@ -237,7 +239,7 @@ void WiFiWebServer::handleClient()
 {
   if (_currentStatus == HC_NONE) 
   {
-    WiFiClient client = _server.available();
+    HusarnetClient client = _server.available();
     if (!client) 
     {
       return;
@@ -251,7 +253,7 @@ void WiFiWebServer::handleClient()
   }
   if (!_currentClient.connected()) 
   {
-    _currentClient = WiFiClient();
+    _currentClient = HusarnetClient();
     _currentStatus = HC_NONE;
     return;
   }
@@ -265,7 +267,7 @@ void WiFiWebServer::handleClient()
       {
         LOGINFO(F("HTTP_MAX_DATA_WAIT Timeout"));
 
-        _currentClient = WiFiClient();
+        _currentClient = HusarnetClient();
         _currentStatus = HC_NONE;
       }
       yield();
@@ -278,7 +280,7 @@ void WiFiWebServer::handleClient()
     {
       LOGINFO(F("Can't parse request"));
 
-      _currentClient = WiFiClient();
+      _currentClient = HusarnetClient();
       _currentStatus = HC_NONE;
       return;
     }
@@ -293,7 +295,7 @@ void WiFiWebServer::handleClient()
     {
       LOGINFO(F("Connection closed"));
 
-      _currentClient = WiFiClient();
+      _currentClient = HusarnetClient();
       _currentStatus = HC_NONE;
       return;
     } 
@@ -309,7 +311,7 @@ void WiFiWebServer::handleClient()
   {
     if (millis() - _statusChange > HTTP_MAX_CLOSE_WAIT) 
     {
-      _currentClient = WiFiClient();
+      _currentClient = HusarnetClient();
       _currentStatus = HC_NONE;
 
       LOGINFO(F("HTTP_MAX_CLOSE_WAIT Timeout"));

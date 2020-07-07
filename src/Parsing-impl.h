@@ -27,6 +27,7 @@
 #define WiFiWebServer_Parsing_impl_h
 
 #include <Arduino.h>
+#include <Husarnet.h>
 
 #include "WiFiWebServer.h"
 
@@ -37,7 +38,7 @@
 // KH
 #if USE_NEW_WEBSERVER_VERSION
 
-static bool readBytesWithTimeout(WiFiClient& client, size_t maxLength, String& data, int timeout_ms)
+static bool readBytesWithTimeout(HusarnetClient& client, size_t maxLength, String& data, int timeout_ms)
 {
   if (!data.reserve(maxLength + 1))
     return false;
@@ -57,7 +58,7 @@ static bool readBytesWithTimeout(WiFiClient& client, size_t maxLength, String& d
   return data.length() == maxLength;
 }
 #else
-static char* readBytesWithTimeout(WiFiClient& client, size_t maxLength, size_t& dataLength, int timeout_ms)
+static char* readBytesWithTimeout(HusarnetClient& client, size_t maxLength, size_t& dataLength, int timeout_ms)
 {
   char *buf = nullptr;
   dataLength = 0;
@@ -90,7 +91,7 @@ static char* readBytesWithTimeout(WiFiClient& client, size_t maxLength, size_t& 
 }
 #endif
 
-bool WiFiWebServer::_parseRequest(WiFiClient& client) {
+bool WiFiWebServer::_parseRequest(HusarnetClient& client) {
   // Read the first line of HTTP request
   String req = client.readStringUntil('\r');
   client.readStringUntil('\n');
@@ -481,7 +482,7 @@ void WiFiWebServer::_uploadWriteByte(uint8_t b)
   _currentUpload->buf[_currentUpload->currentSize++] = b;
 }
 
-uint8_t WiFiWebServer::_uploadReadByte(WiFiClient& client)
+uint8_t WiFiWebServer::_uploadReadByte(HusarnetClient& client)
 {
   int res = client.read();
   
@@ -571,7 +572,7 @@ void WiFiWebServer::_uploadWriteByte(uint8_t b) {
   _currentUpload.buf[_currentUpload.currentSize++] = b;
 }
 
-uint8_t WiFiWebServer::_uploadReadByte(WiFiClient& client) {
+uint8_t WiFiWebServer::_uploadReadByte(HusarnetClient& client) {
   int res = client.read();
   if (res == -1) {
     while (!client.available() && client.connected())
@@ -585,7 +586,7 @@ uint8_t WiFiWebServer::_uploadReadByte(WiFiClient& client) {
 
 #if USE_NEW_WEBSERVER_VERSION
 
-bool WiFiWebServer::_parseForm(WiFiClient& client, const String& boundary, uint32_t len)
+bool WiFiWebServer::_parseForm(HusarnetClient& client, const String& boundary, uint32_t len)
 {
   (void) len;
 
@@ -833,7 +834,7 @@ bool WiFiWebServer::_parseFormUploadAborted(){
 
 #else
 
-bool WiFiWebServer::_parseForm(WiFiClient& client, String boundary, uint32_t len) {
+bool WiFiWebServer::_parseForm(HusarnetClient& client, String boundary, uint32_t len) {
 
   LOGDEBUG1(F("Parse Form: Boundary: "), boundary);
   LOGDEBUG1(F("Length: "), len);

@@ -26,6 +26,8 @@
 #ifndef WiFiWebServer_h
 #define WiFiWebServer_h
 
+#include <Husarnet.h>
+
 #define USE_NEW_WEBSERVER_VERSION     true
 
 #if    ( defined(ARDUINO_SAMD_ZERO) || defined(ARDUINO_SAMD_MKR1000) || defined(ARDUINO_SAMD_MKRWIFI1010) \
@@ -162,7 +164,7 @@ class WiFiWebServer
     HTTPMethod method() {
       return _currentMethod;
     }
-    WiFiClient client() {
+    HusarnetClient client() {
       return _currentClient;
     }
     //KH
@@ -234,22 +236,22 @@ class WiFiWebServer
     void _addRequestHandler(RequestHandler* handler);
     void _handleRequest();
     void _finalizeResponse();
-    bool _parseRequest(WiFiClient& client);
+    bool _parseRequest(HusarnetClient& client);
     
     //KH
     #if USE_NEW_WEBSERVER_VERSION
     void _parseArguments(const String& data);
     int  _parseArgumentsPrivate(const String& data, vl::Func<void(String&,String&,const String&,int,int,int,int)> handler);
-    bool _parseForm(WiFiClient& client, const String& boundary, uint32_t len);
+    bool _parseForm(HusarnetClient& client, const String& boundary, uint32_t len);
     #else
     void _parseArguments(String data);
-    bool _parseForm(WiFiClient& client, String boundary, uint32_t len);
+    bool _parseForm(HusarnetClient& client, String boundary, uint32_t len);
     #endif
     
     static String _responseCodeToString(int code);    
     bool _parseFormUploadAborted();
     void _uploadWriteByte(uint8_t b);
-    uint8_t _uploadReadByte(WiFiClient& client);
+    uint8_t _uploadReadByte(HusarnetClient& client);
     void _prepareHeader(String& response, int code, const char* content_type, size_t contentLength);
     bool _collectHeader(const char* headerName, const char* headerValue);
     
@@ -258,9 +260,9 @@ class WiFiWebServer
       String value;
     };
 
-    WiFiServer  _server;
+    HusarnetServer  _server;
 
-    WiFiClient  _currentClient;
+    HusarnetClient  _currentClient;
     HTTPMethod  _currentMethod;
     String      _currentUri;
     uint8_t     _currentVersion;
